@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ruta_verde_pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ruta_verde}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ruta_verde}
+      POSTGRES_DB: ${POSTGRES_DB:-ruta_verde}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Persistencia: borrar con `docker compose down -v` para empezar de 0
+      - pgdata:/var/lib/postgresql/data
+      # Schema solo en el primer arranque (volumen vacío)
+      - ./sql/01_schema_normalizado.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      # SQL y CSVs montados para cargar / iterar sin reconstruir la imagen
+      - ./sql:/sql:ro
+      - ./datos:/datos:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    # Más memoria compartida ayuda a EXPLAIN ANALYZE con tablas grandes
+    shm_size: 256mb
+
+volumes:
+  pgdata:
+    name: ruta_verde_pgdata
