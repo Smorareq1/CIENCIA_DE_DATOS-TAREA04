@@ -1,0 +1,346 @@
+{
+  "timestamp": "2026-08-09T11:31:19-06:00",
+  "n_pedidos": 3000000,
+  "sizes": [
+    {
+      "tabla": "mart_pedido_geo",
+      "bytes": 521076736,
+      "pretty": "497 MB"
+    },
+    {
+      "tabla": "pedido",
+      "bytes": 347275264,
+      "pretty": "331 MB"
+    },
+    {
+      "tabla": "cliente",
+      "bytes": 7282688,
+      "pretty": "7112 kB"
+    },
+    {
+      "tabla": "agg_ventas_zona_mes",
+      "bytes": 2088960,
+      "pretty": "2040 kB"
+    },
+    {
+      "tabla": "mv_ventas_zona_mes",
+      "bytes": 1449984,
+      "pretty": "1416 kB"
+    },
+    {
+      "tabla": "restaurante",
+      "bytes": 303104,
+      "pretty": "296 kB"
+    },
+    {
+      "tabla": "zona",
+      "bytes": 98304,
+      "pretty": "96 kB"
+    },
+    {
+      "tabla": "municipio",
+      "bytes": 40960,
+      "pretty": "40 kB"
+    },
+    {
+      "tabla": "departamento",
+      "bytes": 24576,
+      "pretty": "24 kB"
+    }
+  ],
+  "size_normalizado_bytes": 355024896,
+  "size_normalizado_pretty": "339 MB",
+  "size_prejoin_pretty": "497 MB",
+  "size_agg_pretty": "2040 kB",
+  "size_mv_pretty": "1416 kB",
+  "queries": {
+    "Q1_ventas_zona_mes": {
+      "titulo": "Ventas totales por zona y mes (dashboard gerencial)",
+      "tecnica": "Pre-join + columna derivada `anio_mes` / Tabla agregada / MV",
+      "equivalence": "OK — mismo fingerprint",
+      "fingerprints": {
+        "normalizado": "ac71f17d807ace0231428a9cd9744f2a",
+        "prejoin": "ac71f17d807ace0231428a9cd9744f2a",
+        "agregada": "ac71f17d807ace0231428a9cd9744f2a",
+        "mv": "ac71f17d807ace0231428a9cd9744f2a"
+      },
+      "mediciones": {
+        "normalizado": {
+          "all_ms": [
+            726.061,
+            728.087,
+            698.538,
+            701.957,
+            686.512,
+            728.024
+          ],
+          "cold_ms": 726.061,
+          "hot_ms": [
+            728.087,
+            698.538,
+            701.957,
+            686.512,
+            728.024
+          ],
+          "median_ms": 701.957,
+          "min_ms": 686.512,
+          "max_ms": 728.087
+        },
+        "prejoin": {
+          "all_ms": [
+            311.005,
+            321.103,
+            308.77,
+            298.702,
+            312.761,
+            313.577
+          ],
+          "cold_ms": 311.005,
+          "hot_ms": [
+            321.103,
+            308.77,
+            298.702,
+            312.761,
+            313.577
+          ],
+          "median_ms": 312.761,
+          "min_ms": 298.702,
+          "max_ms": 321.103
+        },
+        "agregada": {
+          "all_ms": [
+            1.709,
+            1.2,
+            1.248,
+            1.205,
+            1.345,
+            1.268
+          ],
+          "cold_ms": 1.709,
+          "hot_ms": [
+            1.2,
+            1.248,
+            1.205,
+            1.345,
+            1.268
+          ],
+          "median_ms": 1.248,
+          "min_ms": 1.2,
+          "max_ms": 1.345
+        },
+        "mv": {
+          "all_ms": [
+            1.279,
+            0.907,
+            0.938,
+            0.934,
+            0.919,
+            0.924
+          ],
+          "cold_ms": 1.279,
+          "hot_ms": [
+            0.907,
+            0.938,
+            0.934,
+            0.919,
+            0.924
+          ],
+          "median_ms": 0.924,
+          "min_ms": 0.907,
+          "max_ms": 0.938
+        }
+      },
+      "tradeoff": [
+        "**Qué gana:** el dashboard deja de recorrer millones de pedidos con 2–4 joins.",
+        "**Redundancia:** nombres de zona/restaurante/depto repetidos (pre-join) o métricas materializadas (agg/MV).",
+        "**Riesgo:** si cambia el nombre de una zona o se corrige un `total`, hay que refrescar mart/agg/MV; datos stale hasta el refresh.",
+        "**Se acepta** porque es consulta diaria de gerencia y el warehouse puede regenerarse desde el modelo normalizado."
+      ]
+    },
+    "Q2_ventas_departamento_mes": {
+      "titulo": "Ventas por departamento y mes (rollup geográfico)",
+      "tecnica": "Pre-join (elimina 4 joins) vs joins normalizados",
+      "equivalence": "OK — mismo fingerprint",
+      "fingerprints": {
+        "normalizado": "f1896014d68e1a48e4936673f703f06a",
+        "prejoin": "f1896014d68e1a48e4936673f703f06a",
+        "agregada": "f1896014d68e1a48e4936673f703f06a"
+      },
+      "mediciones": {
+        "normalizado": {
+          "all_ms": [
+            484.389,
+            483.777,
+            482.503,
+            491.711,
+            488.551,
+            492.51
+          ],
+          "cold_ms": 484.389,
+          "hot_ms": [
+            483.777,
+            482.503,
+            491.711,
+            488.551,
+            492.51
+          ],
+          "median_ms": 488.551,
+          "min_ms": 482.503,
+          "max_ms": 492.51
+        },
+        "prejoin": {
+          "all_ms": [
+            187.678,
+            198.812,
+            188.67,
+            185.785,
+            188.172,
+            188.013
+          ],
+          "cold_ms": 187.678,
+          "hot_ms": [
+            198.812,
+            188.67,
+            185.785,
+            188.172,
+            188.013
+          ],
+          "median_ms": 188.172,
+          "min_ms": 185.785,
+          "max_ms": 198.812
+        },
+        "agregada": {
+          "all_ms": [
+            3.263,
+            3.191,
+            3.249,
+            3.184,
+            3.193,
+            3.303
+          ],
+          "cold_ms": 3.263,
+          "hot_ms": [
+            3.191,
+            3.249,
+            3.184,
+            3.193,
+            3.303
+          ],
+          "median_ms": 3.193,
+          "min_ms": 3.184,
+          "max_ms": 3.303
+        }
+      },
+      "tradeoff": [
+        "**Qué gana:** elimina la cadena de joins geográficos en cada ejecución.",
+        "**Redundancia:** `departamento_nombre` (y resto de jerarquía) denormalizado en el mart; o rollup desde la agregada.",
+        "**Riesgo:** inconsistencia si la jerarquía geográfica se reclasifica (un municipio cambia de departamento) y no se regenera el mart.",
+        "**Se acepta** en la capa de consumo (mart); el core sigue normalizado."
+      ]
+    },
+    "Q3_top_zonas_ultimo_trimestre": {
+      "titulo": "Top 20 zonas por ventas en un trimestre fijo",
+      "tecnica": "Pre-join + filtro sobre columna derivada / agregada filtrada",
+      "equivalence": "OK — mismo fingerprint",
+      "fingerprints": {
+        "normalizado": "0b2d7c67ca98b941e79013a882a9b9c4",
+        "prejoin": "0b2d7c67ca98b941e79013a882a9b9c4",
+        "agregada": "0b2d7c67ca98b941e79013a882a9b9c4"
+      },
+      "mediciones": {
+        "normalizado": {
+          "all_ms": [
+            78.235,
+            78.637,
+            79.082,
+            78.446,
+            80.685,
+            81.779
+          ],
+          "cold_ms": 78.235,
+          "hot_ms": [
+            78.637,
+            79.082,
+            78.446,
+            80.685,
+            81.779
+          ],
+          "median_ms": 79.082,
+          "min_ms": 78.446,
+          "max_ms": 81.779
+        },
+        "prejoin": {
+          "all_ms": [
+            111.193,
+            108.278,
+            106.157,
+            106.577,
+            103.616,
+            106.701
+          ],
+          "cold_ms": 111.193,
+          "hot_ms": [
+            108.278,
+            106.157,
+            106.577,
+            103.616,
+            106.701
+          ],
+          "median_ms": 106.577,
+          "min_ms": 103.616,
+          "max_ms": 108.278
+        },
+        "agregada": {
+          "all_ms": [
+            2.256,
+            1.716,
+            1.713,
+            1.705,
+            1.653,
+            1.68
+          ],
+          "cold_ms": 2.256,
+          "hot_ms": [
+            1.716,
+            1.713,
+            1.705,
+            1.653,
+            1.68
+          ],
+          "median_ms": 1.705,
+          "min_ms": 1.653,
+          "max_ms": 1.716
+        }
+      },
+      "tradeoff": [
+        "**Qué gana:** ranking trimestral sin escanear todo `pedido` con joins (sobre todo vía tabla agregada por mes).",
+        "**Redundancia:** misma del mart/agg; el filtro trimestral sobre `anio_mes` evita recalcular `to_char` sobre cada fila cruda si se usa la agregada.",
+        "**Riesgo:** fan-out no aplica aquí (grain pedido o zona-mes es correcto); el riesgo es frescura del agregado.",
+        "**Se acepta** para reportes periódicos; no para exploración ad-hoc sin patrón fijo."
+      ]
+    }
+  },
+  "decisiones": [
+    {
+      "decision": "A — Pre-join + columnas derivadas (`mart_pedido_geo`)",
+      "consulta": "Q1/Q2/Q3 — mediana Q1 312.761 ms vs 701.957 ms",
+      "espacio": "497 MB",
+      "riesgo": "Redundancia de nombres; hay que regenerar si cambia la dimensión geográfica o un pedido",
+      "porque": "Acelera lecturas geográficas recurrentes; el normalizado sigue siendo fuente de verdad"
+    },
+    {
+      "decision": "B — Tabla agregada (`agg_ventas_zona_mes`)",
+      "consulta": "Q1 — mediana 1.248 ms vs 701.957 ms",
+      "espacio": "2040 kB",
+      "riesgo": "Granularidad fija zona×mes: no responde preguntas a nivel pedido sin volver al detalle",
+      "porque": "El dashboard solo necesita ese grain; el costo de espacio es mínimo vs escanear 3M filas"
+    },
+    {
+      "decision": "C — Vista materializada (`mv_ventas_zona_mes`)",
+      "consulta": "Q1 — mediana 0.924 ms vs 701.957 ms",
+      "espacio": "1416 kB",
+      "riesgo": "Hay que definir política de `REFRESH MATERIALIZED VIEW` (datos stale)",
+      "porque": "Misma ganancia que la agregada, pero declarativa y versionable en SQL"
+    }
+  ]
+}

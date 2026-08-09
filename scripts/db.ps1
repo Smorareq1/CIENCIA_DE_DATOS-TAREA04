@@ -17,8 +17,8 @@
 param(
     [Parameter(Position = 0)]
     [ValidateSet(
-        "up", "down", "reset", "soft-reset", "load", "schema",
-        "generate", "psql", "status", "size", "help"
+        "up", "down", "reset", "soft-reset", "load", "schema", "denorm",
+        "benchmark", "generate", "psql", "status", "size", "help"
     )]
     [string]$Cmd = "help",
 
@@ -62,16 +62,19 @@ Comandos:
   soft-reset   DROP SCHEMA + schema + load (sin borrar volumen Docker)
   schema       Aplica sql/01_schema_normalizado.sql
   load         TRUNCATE + COPY de datos/*.csv
+  denorm       Construye marts desnormalizados (sql/03_...)
+  benchmark    Corre mediciones → docs/procedimiento/comparaciones.md
   generate     Genera CSVs (usa -Pedidos N)
   psql         Abre psql interactivo
   status       docker compose ps
   size         Tamaño de tablas (pg_total_relation_size)
 
-Flujo tipico:
-  .\scripts\db.ps1 generate -Pedidos 100000
+Flujo tipico (laboratorio):
+  .\scripts\db.ps1 generate -Pedidos 3000000
   .\scripts\db.ps1 up
   .\scripts\db.ps1 load
-  .\scripts\db.ps1 psql
+  .\scripts\db.ps1 denorm
+  .\scripts\db.ps1 benchmark
 "@
     }
     "up" {
@@ -99,6 +102,16 @@ Flujo tipico:
         Write-Host "Cargando CSVs (pedido grande puede tardar varios minutos)..."
         Invoke-SqlFile "sql/02_load_normalizado.sql"
         Write-Host "Carga terminada."
+    }
+    "denorm" {
+        Wait-Postgres
+        Write-Host "Construyendo modelos desnormalizados..."
+        Invoke-SqlFile "sql/03_schema_desnormalizado.sql"
+        Write-Host "Denorm listo."
+    }
+    "benchmark" {
+        Wait-Postgres
+        python (Join-Path $Root "scripts\benchmark.py")
     }
     "soft-reset" {
         Ensure-Datos
