@@ -4,6 +4,46 @@
 **Motor:** PostgreSQL 16 (Docker)
 **Volumen:** 3,000,000 filas en `pedido`
 
+## Criterio: no desnormalizar “porque sí”
+
+Las cinco técnicas de clase son un **menú, no una receta**. El flujo que
+seguimos es el de la diapositiva de método:
+
+1. **Empezar normalizado** (3FN cargado desde los CSV).
+2. **Medir** qué consulta duele (frecuencia × costo), no intuición.
+3. **Elegir por síntoma** la técnica adecuada.
+4. **Documentar el trade-off** (qué gano, qué pierdo, por qué lo acepto).
+5. **Volver a medir** — si no mejoró, **revertir / no adoptar**.
+
+Desnormalizamos solo en la **capa de consumo** (`mart_*`, `agg_*`, `mv_*`).
+El core (`pedido`, dimensiones geográficas, `cliente`) permanece en 3FN.
+
+### Selección por síntoma (qué sí / qué no)
+
+| Síntoma observado | Técnica candidata | ¿La adoptamos? | Justificación |
+|-------------------|-------------------|----------------|---------------|
+| Q1/Q2 encadenan 2–4 joins geográficos sobre 3M filas | 1. Pre-join | **Sí, con matices** | Mejora Q1 (~2.2×) y Q2 (~2.6×). En Q3 **empeora** → no se usa para ese patrón. |
+| Se recalcula `to_char(fecha,'YYYY-MM')` / dow en cada query | 2. Columna derivada | **Sí (dentro del mart)** | `anio_mes` y `dia_semana` en `mart_pedido_geo`; baratas y alineadas al dashboard. |
+| Dashboard recurrente barre millones para devolver ~12k filas zona×mes | 3. Tabla agregada | **Sí — preferida** | Q1 pasa de ~702 ms a ~1.2 ms; cuesta ~2 MB. Mejor relación ganancia/costo. |
+| Pedido con muchos hijos que explotaría filas al aplanar | 4. Estructuras anidadas | **No** | El esquema de la guía no tiene `detalle_pedido`/`producto`. No hay síntoma de fan-out que resolver. Aplicarla sería inventar un problema. |
+| Misma transformación del dashboard, versionable y refrescable | 5. Vista materializada | **Sí (alternativa a la agregada)** | Misma ganancia que `agg_*` (~0.9 ms) con SQL declarativo; obliga a definir política de `REFRESH`. |
+
+### Qué rechazamos a propósito
+
+- **No** convertimos el core en una sola tabla ancha de 300 columnas (trampa
+  “la tabla que nadie entiende”).
+- **No** usamos pre-join como solución universal: en Q3 midió **peor** que el
+  3FN (106.6 ms vs 79.1 ms) → se descarta para rankings con filtro temporal
+  selectivo.
+- **No** aplicamos estructuras anidadas ni desnormalizamos para consultas
+  exploratorias sin patrón fijo (reto de clase #3: “productos juntos”): sin
+  modelo de detalle y sin recurrencia, desnormalizar sería optimizar a ciegas.
+- **No** tocamos la capa de integración: ahí manda corrección e historia, no
+  velocidad de lectura del dashboard.
+
+Regla usada: *primero normalizado y correcto → medido → desnormalizado solo
+donde la medición lo justifique.*
+
 ## Protocolo
 
 Según `docs/GUIA/GUIA.md`:
@@ -56,7 +96,10 @@ Según `docs/GUIA/GUIA.md`:
 - **Qué gana:** el dashboard deja de recorrer millones de pedidos con 2–4 joins.
 - **Redundancia:** nombres de zona/restaurante/depto repetidos (pre-join) o métricas materializadas (agg/MV).
 - **Riesgo:** si cambia el nombre de una zona o se corrige un `total`, hay que refrescar mart/agg/MV; datos stale hasta el refresh.
-- **Se acepta** porque es consulta diaria de gerencia y el warehouse puede regenerarse desde el modelo normalizado.
+- **Decisión para Q1:** se adopta **tabla agregada o MV** como solución principal
+  (ganancia ~500–700×, ~2 MB). El pre-join ayuda (~2×) pero cuesta +158 MB y
+  sigue agregando en query time; es opcional, no obligatorio. No se “tiran”
+  las cinco técnicas: se elige la del síntoma (recorrer millones → pocas filas).
 
 ## Q2_ventas_departamento_mes: Ventas por departamento y mes (rollup geográfico)
 

@@ -99,3 +99,7 @@ python scripts/benchmark.py
    consulta ya filtra bien sobre el modelo estrecho (Q3).
 3. Desnormalizar sin medir habría sido una suposición: en Q3 el pre-join
    **no** se justifica.
+4. **No se aplican las cinco técnicas por defecto.** Anidadas no aplican (no hay
+   detalle/producto); pre-join se adopta solo donde midió mejor; agregada/MV
+   son la elección para el dashboard. Detalle en
+   [comparaciones.md](./comparaciones.md) § *Criterio: no desnormalizar “porque sí”*.
