@@ -18,7 +18,7 @@ param(
     [Parameter(Position = 0)]
     [ValidateSet(
         "up", "down", "reset", "soft-reset", "load", "schema", "denorm",
-        "benchmark", "generate", "psql", "status", "size", "help"
+        "dimensional", "benchmark", "benchmark05", "generate", "psql", "status", "size", "help"
     )]
     [string]$Cmd = "help",
 
@@ -62,8 +62,10 @@ Comandos:
   soft-reset   DROP SCHEMA + schema + load (sin borrar volumen Docker)
   schema       Aplica sql/01_schema_normalizado.sql
   load         TRUNCATE + COPY de datos/*.csv
-  denorm       Construye marts desnormalizados (sql/03_...)
-  benchmark    Corre mediciones → docs/procedimiento/comparaciones.md
+  denorm       Construye marts desnormalizados clase 04 (sql/03_...)
+  dimensional  Construye hechos + dims clase 05 (sql/05_...)
+  benchmark    Corre mediciones clase 04
+  benchmark05  Corre mediciones clase 05 → docs/05/procedimiento/
   generate     Genera CSVs (usa -Pedidos N)
   psql         Abre psql interactivo
   status       docker compose ps
@@ -109,9 +111,19 @@ Flujo tipico (laboratorio):
         Invoke-SqlFile "sql/03_schema_desnormalizado.sql"
         Write-Host "Denorm listo."
     }
+    "dimensional" {
+        Wait-Postgres
+        Write-Host "Construyendo modelo dimensional (hechos + dims)..."
+        Invoke-SqlFile "sql/05_schema_dimensional.sql"
+        Write-Host "Dimensional listo."
+    }
     "benchmark" {
         Wait-Postgres
         python (Join-Path $Root "scripts\benchmark.py")
+    }
+    "benchmark05" {
+        Wait-Postgres
+        python (Join-Path $Root "scripts\benchmark_05.py")
     }
     "soft-reset" {
         Ensure-Datos

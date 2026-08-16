@@ -1,0 +1,366 @@
+{
+  "timestamp": "2026-08-16T11:27:13-06:00",
+  "n_pedidos": 3000000,
+  "sizes": [
+    {
+      "tabla": "mart_pedido_geo",
+      "bytes": 521224192,
+      "pretty": "497 MB"
+    },
+    {
+      "tabla": "hechos_pedidos",
+      "bytes": 358178816,
+      "pretty": "342 MB"
+    },
+    {
+      "tabla": "pedido",
+      "bytes": 347275264,
+      "pretty": "331 MB"
+    },
+    {
+      "tabla": "dim_cliente",
+      "bytes": 8151040,
+      "pretty": "7960 kB"
+    },
+    {
+      "tabla": "cliente",
+      "bytes": 7282688,
+      "pretty": "7112 kB"
+    },
+    {
+      "tabla": "hechos_ventas_zona_mes",
+      "bytes": 2088960,
+      "pretty": "2040 kB"
+    },
+    {
+      "tabla": "agg_ventas_zona_mes",
+      "bytes": 1974272,
+      "pretty": "1928 kB"
+    },
+    {
+      "tabla": "mv_ventas_zona_mes",
+      "bytes": 1343488,
+      "pretty": "1312 kB"
+    },
+    {
+      "tabla": "dim_restaurante",
+      "bytes": 417792,
+      "pretty": "408 kB"
+    },
+    {
+      "tabla": "restaurante",
+      "bytes": 303104,
+      "pretty": "296 kB"
+    },
+    {
+      "tabla": "dim_fecha",
+      "bytes": 139264,
+      "pretty": "136 kB"
+    },
+    {
+      "tabla": "zona",
+      "bytes": 98304,
+      "pretty": "96 kB"
+    },
+    {
+      "tabla": "municipio",
+      "bytes": 40960,
+      "pretty": "40 kB"
+    },
+    {
+      "tabla": "departamento",
+      "bytes": 24576,
+      "pretty": "24 kB"
+    },
+    {
+      "tabla": "dim_estado",
+      "bytes": 24576,
+      "pretty": "24 kB"
+    }
+  ],
+  "size_3fn_bytes": 355024896,
+  "size_3fn_pretty": "339 MB",
+  "size_dim_bytes": 366911488,
+  "size_dim_pretty": "350 MB",
+  "size_agg_pretty": "2040 kB",
+  "queries": {
+    "Q1_ventas_zona_mes": {
+      "titulo": "Ventas totales por zona y mes (dashboard gerencial)",
+      "nota": "Mismo patrón de la clase 04. El dimensional NO cambia el grano: agrega en query time. La tabla agregada SÍ cambia el grano (otra tabla).",
+      "equivalence": "OK — mismo fingerprint",
+      "fingerprints": {
+        "normalizado": "ac71f17d807ace0231428a9cd9744f2a",
+        "dimensional": "ac71f17d807ace0231428a9cd9744f2a",
+        "agregada": "ac71f17d807ace0231428a9cd9744f2a"
+      },
+      "mediciones": {
+        "normalizado": {
+          "all_ms": [
+            684.395,
+            683.772,
+            691.792,
+            682.906,
+            693.724,
+            685.608
+          ],
+          "cold_ms": 684.395,
+          "hot_ms": [
+            683.772,
+            691.792,
+            682.906,
+            693.724,
+            685.608
+          ],
+          "median_ms": 685.608,
+          "min_ms": 682.906,
+          "max_ms": 693.724
+        },
+        "dimensional": {
+          "all_ms": [
+            356.958,
+            354.505,
+            369.59,
+            376.934,
+            365.082,
+            354.052
+          ],
+          "cold_ms": 356.958,
+          "hot_ms": [
+            354.505,
+            369.59,
+            376.934,
+            365.082,
+            354.052
+          ],
+          "median_ms": 365.082,
+          "min_ms": 354.052,
+          "max_ms": 376.934
+        },
+        "agregada": {
+          "all_ms": [
+            3.085,
+            2.188,
+            2.132,
+            2.15,
+            2.291,
+            2.14
+          ],
+          "cold_ms": 3.085,
+          "hot_ms": [
+            2.188,
+            2.132,
+            2.15,
+            2.291,
+            2.14
+          ],
+          "median_ms": 2.15,
+          "min_ms": 2.132,
+          "max_ms": 2.291
+        }
+      }
+    },
+    "Q2_ventas_departamento_mes": {
+      "titulo": "Ventas por departamento y mes (rollup geográfico)",
+      "nota": "El pre-join vive en dim_restaurante (2 500 filas), no repetido en 3M hechos.",
+      "equivalence": "OK — mismo fingerprint",
+      "fingerprints": {
+        "normalizado": "f1896014d68e1a48e4936673f703f06a",
+        "dimensional": "f1896014d68e1a48e4936673f703f06a",
+        "agregada": "f1896014d68e1a48e4936673f703f06a"
+      },
+      "mediciones": {
+        "normalizado": {
+          "all_ms": [
+            475.633,
+            478.635,
+            480.243,
+            479.697,
+            481.909,
+            489.554
+          ],
+          "cold_ms": 475.633,
+          "hot_ms": [
+            478.635,
+            480.243,
+            479.697,
+            481.909,
+            489.554
+          ],
+          "median_ms": 480.243,
+          "min_ms": 478.635,
+          "max_ms": 489.554
+        },
+        "dimensional": {
+          "all_ms": [
+            274.899,
+            271.999,
+            282.824,
+            281.213,
+            277.719,
+            277.238
+          ],
+          "cold_ms": 274.899,
+          "hot_ms": [
+            271.999,
+            282.824,
+            281.213,
+            277.719,
+            277.238
+          ],
+          "median_ms": 277.719,
+          "min_ms": 271.999,
+          "max_ms": 282.824
+        },
+        "agregada": {
+          "all_ms": [
+            3.312,
+            3.301,
+            3.304,
+            3.351,
+            3.289,
+            3.205
+          ],
+          "cold_ms": 3.312,
+          "hot_ms": [
+            3.301,
+            3.304,
+            3.351,
+            3.289,
+            3.205
+          ],
+          "median_ms": 3.301,
+          "min_ms": 3.205,
+          "max_ms": 3.351
+        }
+      }
+    },
+    "Q3_top_zonas_2025q1": {
+      "titulo": "Top 20 zonas por ventas en 2025-Q1",
+      "nota": "Filtro temporal selectivo. La agregada gana porque el grain zona×mes ya está materializado.",
+      "equivalence": "OK — mismo fingerprint",
+      "fingerprints": {
+        "normalizado": "0b2d7c67ca98b941e79013a882a9b9c4",
+        "dimensional": "0b2d7c67ca98b941e79013a882a9b9c4",
+        "agregada": "0b2d7c67ca98b941e79013a882a9b9c4"
+      },
+      "mediciones": {
+        "normalizado": {
+          "all_ms": [
+            82.334,
+            79.483,
+            78.814,
+            76.325,
+            77.768,
+            79.498
+          ],
+          "cold_ms": 82.334,
+          "hot_ms": [
+            79.483,
+            78.814,
+            76.325,
+            77.768,
+            79.498
+          ],
+          "median_ms": 78.814,
+          "min_ms": 76.325,
+          "max_ms": 79.498
+        },
+        "dimensional": {
+          "all_ms": [
+            107.51,
+            106.012,
+            112.844,
+            108.447,
+            106.244,
+            109.335
+          ],
+          "cold_ms": 107.51,
+          "hot_ms": [
+            106.012,
+            112.844,
+            108.447,
+            106.244,
+            109.335
+          ],
+          "median_ms": 108.447,
+          "min_ms": 106.012,
+          "max_ms": 112.844
+        },
+        "agregada": {
+          "all_ms": [
+            2.111,
+            1.672,
+            1.733,
+            1.691,
+            1.73,
+            1.722
+          ],
+          "cold_ms": 2.111,
+          "hot_ms": [
+            1.672,
+            1.733,
+            1.691,
+            1.73,
+            1.722
+          ],
+          "median_ms": 1.722,
+          "min_ms": 1.672,
+          "max_ms": 1.733
+        }
+      }
+    },
+    "Q4_segmento_dia_semana": {
+      "titulo": "Ventas por segmento de cliente y día de la semana",
+      "nota": "Pregunta que el grano zona×mes NO puede responder. Solo 3FN y el hecho transaccional. Demuestra que el grano es irreversible.",
+      "equivalence": "OK — mismo fingerprint",
+      "fingerprints": {
+        "normalizado": "fb99ab3af2bfe2a09bba32cb7f6fc467",
+        "dimensional": "fb99ab3af2bfe2a09bba32cb7f6fc467"
+      },
+      "mediciones": {
+        "normalizado": {
+          "all_ms": [
+            335.457,
+            338.429,
+            339.773,
+            346.914,
+            340.98,
+            378.753
+          ],
+          "cold_ms": 335.457,
+          "hot_ms": [
+            338.429,
+            339.773,
+            346.914,
+            340.98,
+            378.753
+          ],
+          "median_ms": 340.98,
+          "min_ms": 338.429,
+          "max_ms": 378.753
+        },
+        "dimensional": {
+          "all_ms": [
+            321.028,
+            341.203,
+            324.539,
+            326.163,
+            334.715,
+            343.973
+          ],
+          "cold_ms": 321.028,
+          "hot_ms": [
+            341.203,
+            324.539,
+            326.163,
+            334.715,
+            343.973
+          ],
+          "median_ms": 334.715,
+          "min_ms": 324.539,
+          "max_ms": 343.973
+        }
+      }
+    }
+  }
+}
