@@ -18,7 +18,8 @@ param(
     [Parameter(Position = 0)]
     [ValidateSet(
         "up", "down", "reset", "soft-reset", "load", "schema", "denorm",
-        "dimensional", "benchmark", "benchmark05", "generate", "psql", "status", "size", "help"
+        "dimensional", "dimensional06", "benchmark", "benchmark05", "benchmark06",
+        "generate", "psql", "status", "size", "help"
     )]
     [string]$Cmd = "help",
 
@@ -64,8 +65,10 @@ Comandos:
   load         TRUNCATE + COPY de datos/*.csv
   denorm       Construye marts desnormalizados clase 04 (sql/03_...)
   dimensional  Construye hechos + dims clase 05 (sql/05_...)
+  dimensional06 Construye estrella clase 06 (SK, cobros, calificaciones)
   benchmark    Corre mediciones clase 04
   benchmark05  Corre mediciones clase 05 → docs/05/procedimiento/
+  benchmark06  Corre mediciones clase 06 → docs/06/procedimiento/
   generate     Genera CSVs (usa -Pedidos N)
   psql         Abre psql interactivo
   status       docker compose ps
@@ -117,6 +120,12 @@ Flujo tipico (laboratorio):
         Invoke-SqlFile "sql/05_schema_dimensional.sql"
         Write-Host "Dimensional listo."
     }
+    "dimensional06" {
+        Wait-Postgres
+        Write-Host "Construyendo modelo dimensional clase 06..."
+        Invoke-SqlFile "sql/06_schema_dimensional.sql"
+        Write-Host "Dimensional 06 listo."
+    }
     "benchmark" {
         Wait-Postgres
         python (Join-Path $Root "scripts\benchmark.py")
@@ -124,6 +133,10 @@ Flujo tipico (laboratorio):
     "benchmark05" {
         Wait-Postgres
         python (Join-Path $Root "scripts\benchmark_05.py")
+    }
+    "benchmark06" {
+        Wait-Postgres
+        python (Join-Path $Root "scripts\benchmark_06.py")
     }
     "soft-reset" {
         Ensure-Datos

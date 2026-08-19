@@ -1,0 +1,234 @@
+{
+  "timestamp": "2026-08-18T23:54:32-06:00",
+  "n_pedidos": 3000000,
+  "n_cobros": 2287575,
+  "n_calificaciones": 2001626,
+  "n_cancelaciones": 499329,
+  "kpis": {
+    "n_entregados": 2001626,
+    "n_split": 285949,
+    "ventas_correctas": 485342952.5,
+    "cobrado_correcto": 485342952.5,
+    "ventas_join_ilegal": 554686695.39,
+    "delta_join": 69343742.89,
+    "inflacion_pct": 14.2876,
+    "pct_correcto": 66.7209,
+    "pct_promedio_zonas": 66.7403,
+    "pct_sesgo": 0.0194
+  },
+  "drill": {
+    "fingerprints": {
+      "join_ilegal": "dd3b49fb3379c80dc84a53b6aef9a492",
+      "drill_across": "597f7d8a91b47276f47d02036abdd55a"
+    },
+    "mediciones": {
+      "join_ilegal": {
+        "all_ms": [
+          803.739,
+          878.709,
+          844.293,
+          841.348,
+          930.516,
+          837.115
+        ],
+        "cold_ms": 803.739,
+        "hot_ms": [
+          878.709,
+          844.293,
+          841.348,
+          930.516,
+          837.115
+        ],
+        "median_ms": 844.293,
+        "min_ms": 837.115,
+        "max_ms": 930.516
+      },
+      "drill_across": {
+        "all_ms": [
+          713.045,
+          726.902,
+          769.503,
+          717.291,
+          751.533,
+          769.13
+        ],
+        "cold_ms": 713.045,
+        "hot_ms": [
+          726.902,
+          769.503,
+          717.291,
+          751.533,
+          769.13
+        ],
+        "median_ms": 751.533,
+        "min_ms": 717.291,
+        "max_ms": 769.503
+      }
+    }
+  },
+  "q1": {
+    "equivalence": "OK — mismo fingerprint",
+    "fingerprints": {
+      "normalizado_3fn": "ac71f17d807ace0231428a9cd9744f2a",
+      "estrella": "ac71f17d807ace0231428a9cd9744f2a",
+      "agregada": "ac71f17d807ace0231428a9cd9744f2a"
+    },
+    "mediciones": {
+      "normalizado_3fn": {
+        "all_ms": [
+          718.88,
+          737.069,
+          701.755,
+          708.774,
+          716.856,
+          699.722
+        ],
+        "cold_ms": 718.88,
+        "hot_ms": [
+          737.069,
+          701.755,
+          708.774,
+          716.856,
+          699.722
+        ],
+        "median_ms": 708.774,
+        "min_ms": 699.722,
+        "max_ms": 737.069
+      },
+      "estrella": {
+        "all_ms": [
+          384.064,
+          389.165,
+          406.336,
+          405.918,
+          377.49,
+          368.168
+        ],
+        "cold_ms": 384.064,
+        "hot_ms": [
+          389.165,
+          406.336,
+          405.918,
+          377.49,
+          368.168
+        ],
+        "median_ms": 389.165,
+        "min_ms": 368.168,
+        "max_ms": 406.336
+      },
+      "agregada": {
+        "all_ms": [
+          2.306,
+          2.45,
+          2.49,
+          2.383,
+          2.463,
+          2.369
+        ],
+        "cold_ms": 2.306,
+        "hot_ms": [
+          2.45,
+          2.49,
+          2.383,
+          2.463,
+          2.369
+        ],
+        "median_ms": 2.45,
+        "min_ms": 2.369,
+        "max_ms": 2.49
+      }
+    }
+  },
+  "sizes": [
+    {
+      "tabla": "mart_pedido_geo",
+      "bytes": 521224192,
+      "pretty": "497 MB"
+    },
+    {
+      "tabla": "hechos_pedidos",
+      "bytes": 357908480,
+      "pretty": "341 MB"
+    },
+    {
+      "tabla": "pedido",
+      "bytes": 347275264,
+      "pretty": "331 MB"
+    },
+    {
+      "tabla": "hechos_cobros",
+      "bytes": 307904512,
+      "pretty": "294 MB"
+    },
+    {
+      "tabla": "hechos_calificaciones",
+      "bytes": 209780736,
+      "pretty": "200 MB"
+    },
+    {
+      "tabla": "hechos_cancelaciones",
+      "bytes": 40943616,
+      "pretty": "39 MB"
+    },
+    {
+      "tabla": "dim_cliente",
+      "bytes": 10002432,
+      "pretty": "9768 kB"
+    },
+    {
+      "tabla": "cliente",
+      "bytes": 7282688,
+      "pretty": "7112 kB"
+    },
+    {
+      "tabla": "agg_ventas_zona_mes",
+      "bytes": 1974272,
+      "pretty": "1928 kB"
+    },
+    {
+      "tabla": "hechos_ventas_zona_mes",
+      "bytes": 1974272,
+      "pretty": "1928 kB"
+    },
+    {
+      "tabla": "mv_ventas_zona_mes",
+      "bytes": 1343488,
+      "pretty": "1312 kB"
+    },
+    {
+      "tabla": "dim_restaurante",
+      "bytes": 524288,
+      "pretty": "512 kB"
+    },
+    {
+      "tabla": "restaurante",
+      "bytes": 303104,
+      "pretty": "296 kB"
+    },
+    {
+      "tabla": "dim_fecha",
+      "bytes": 155648,
+      "pretty": "152 kB"
+    },
+    {
+      "tabla": "zona",
+      "bytes": 98304,
+      "pretty": "96 kB"
+    },
+    {
+      "tabla": "dim_estado",
+      "bytes": 40960,
+      "pretty": "40 kB"
+    },
+    {
+      "tabla": "municipio",
+      "bytes": 40960,
+      "pretty": "40 kB"
+    },
+    {
+      "tabla": "departamento",
+      "bytes": 24576,
+      "pretty": "24 kB"
+    }
+  ]
+}
